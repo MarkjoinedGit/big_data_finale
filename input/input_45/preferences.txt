@@ -1,0 +1,4 @@
+userid,movie_genre
+user1,Animation
+user1,Comedy
+user2,Action
