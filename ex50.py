@@ -10,7 +10,7 @@ from pyspark.sql.functions import udf
 
 @udf
 def parse_columns(name, surname):
-    return name+""+surname
+    return name+" "+surname
 
 def perform_analysis_dataframe(df, output_path):
     """

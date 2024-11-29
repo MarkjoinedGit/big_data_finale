@@ -21,10 +21,16 @@ def perform_analysis_sql(session, df_movies, df_prefer, df_watch, output_path):
     df_movies_watch = session.sql("SELECT w.userid, m.movie_genre FROM watchedmovies w JOIN movies m ON w.movieid = m.movieid")
     df_movies_watch.createOrReplaceTempView("users_watch_genre")
 
-    df_non_preferred_genres = session.sql("SELECT wm.userid, wm.movie_genre FROM users_watch_genre wm LEFT JOIN preferences p ON wm.userid = p.userid AND wm.movie_genre = p.movie_genre WHERE p.movie_genre IS NULL")
+    df_non_preferred_genres = session.sql("SELECT wm.userid, wm.movie_genre \
+                                          FROM users_watch_genre wm LEFT JOIN preferences p \
+                                          ON wm.userid = p.userid AND wm.movie_genre = p.movie_genre \
+                                          WHERE p.movie_genre IS NULL")
     df_non_preferred_genres.createOrReplaceTempView("non_preferred_genres")
 
-    df_misleading_genres  = session.sql("SELECT userid, movie_genre AS misleading_genre FROM non_preferred_genres GROUP BY userid, movie_genre HAVING COUNT(*) >= 5")
+    df_misleading_genres  = session.sql("SELECT userid, movie_genre AS misleading_genre \
+                                        FROM non_preferred_genres \
+                                        GROUP BY userid, movie_genre \
+                                        HAVING COUNT(*) >= 5")
     df_misleading_genres.repartition(1).write.csv(output_path, mode='overwrite', header=True)
 
     # Drop the view
@@ -40,7 +46,7 @@ if __name__ == "__main__":
     os.environ['PYSPARK_PYTHON'] =  "python"
 
     # Create an instance of spark
-    spark = SparkSession.builder.appName('Exercise-50').getOrCreate()
+    spark = SparkSession.builder.appName('Exercise-45').getOrCreate()
 
     # Current path
     absolute_path = Path().absolute()
